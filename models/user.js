@@ -17,6 +17,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  uploads: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Pdf",
+    },
+  ],
 });
 
 userSchema.set("toJSON", {
@@ -25,6 +31,7 @@ userSchema.set("toJSON", {
     delete returnedObject._id;
     delete returnedObject.__v;
     delete returnedObject.passwordHash;
+    return returnedObject;
   },
 });
 
