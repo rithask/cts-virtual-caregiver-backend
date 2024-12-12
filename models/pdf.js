@@ -13,6 +13,10 @@ const pdfSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  uploadDate: {
+    type: Date,
+    required: true,
+  },
 });
 
 pdfSchema.set("toJSON", {
