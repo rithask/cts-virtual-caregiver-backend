@@ -1,23 +1,24 @@
 const mongoose = require("mongoose");
 
-const pdfSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
+const pdfSchema = new mongoose.Schema(
+  {
+    filename: {
+      type: String,
+      required: true,
+    },
+    s3Url: {
+      type: String,
+      required: true,
+    },
+    uploadedBY: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
-  url: {
-    type: String,
-    required: true,
-  },
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  },
-  uploadDate: {
-    type: Date,
-    required: true,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 pdfSchema.set("toJSON", {
   transform: (document, returnedObject) => {
