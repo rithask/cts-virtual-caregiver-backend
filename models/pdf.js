@@ -10,7 +10,7 @@ const pdfSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    uploadedBY: {
+    uploadedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
