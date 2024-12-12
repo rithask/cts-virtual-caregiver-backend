@@ -21,6 +21,11 @@ usersRouter.post("/", async (request, response, next) => {
     return response.status(400).json({ error: "invalid email" });
   }
 
+  const existingUsername = await User.findOne({ username });
+  if (existingUsername) {
+    return response.status(400).json({ error: "username already exists" });
+  }
+
   try {
     const savedUser = await user.save();
 
