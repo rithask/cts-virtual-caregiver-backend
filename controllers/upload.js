@@ -1,7 +1,17 @@
 const config = require("../utils/config");
+const jwt = require("jsonwebtoken");
 const uploadRouter = require("express").Router();
+const user = require("../models/user");
+const Pdf = require("../models/pdf");
+const { authenticate } = require("../utils/middleware");
+
+const {
+  S3Client,
+  ListObjectsV2Command,
+  PutObjectCommand,
+  GetObjectCommand,
+} = require("@aws-sdk/client-s3");
 const multer = require("multer");
-const { S3Client, ListObjectsV2Command } = require("@aws-sdk/client-s3");
 const multerS3 = require("multer-s3");
 
 const s3 = new S3Client({
@@ -16,62 +26,71 @@ const upload = multer({
   storage: multerS3({
     s3: s3,
     bucket: config.S3_BUCKET,
-    acl: "private",
-    key: (request, file, cb) => {
-      const timestamp = new Date().getTime();
-      const filename = `${timestamp}-${file.originalname}`;
-
-      // if (!request.user) {
-      //   return cb(new Error("User not authenticated"));
-      // }
-      if (!request.body.email) {
-        return cb(new Error("Email not provided"));
-      }
-      cb(null, `${request.body.email}/${filename}`);
+    metadata: (req, file, cb) => {
+      cb(null, { fieldName: file.fieldname });
     },
+    key: function (req, file, cb) {
+      cb(null, `${Date.now().toString()}-${file.originalname}`);
+    },
+    acl: "public-read",
   }),
-  limits: { fileSize: 20 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowedMimeTypes = ["application/pdf"];
+    if (!allowedMimeTypes.includes(file.mimetype)) {
+      return cb(new Error("Invalid file type"));
+    }
+    cb(null, true);
+  },
+  limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-uploadRouter.get("/", async (request, response) => {
-  const email = request.query.email;
-  if (!email) {
-    return response.status(400).json({ error: "Email not provided" });
-  }
-
-  const params = {
-    Bucket: config.S3_BUCKET,
-    Prefix: email,
-  };
-
+uploadRouter.get("/", authenticate, async (request, response) => {
   try {
-    const data = await s3.send(new ListObjectsV2Command(params));
-    if (!data.Contents) {
-      return response.status(404).json({ error: "No files found" });
-    }
-    const files = data.Contents.map((file) => {
-      return {
-        key: file.Key,
-        url: `${config.S3_URL}/${file.Key}`,
-      };
+    const pdfs = await Pdf.find({ uploadedBy: request.user.id }).sort({
+      createdAt: -1,
     });
 
-    response.status(200).send(files);
+    response.status(200).json(
+      pdfs.map((pdf) => ({
+        id: pdf._id,
+        filename: pdf.filename,
+        s3Url: pdf.s3Url,
+        createdAt: pdf.createdAt,
+      }))
+    );
   } catch (error) {
+    console.error("Error fetching files:", error.message);
     response.status(500).json({ error: error.message });
   }
 });
 
-uploadRouter.post("/", upload.single("document"), (request, response) => {
-  if (!request.file) {
-    return response.status(400).json({ error: "No file uploaded" });
-  }
+uploadRouter.post(
+  "/",
+  authenticate,
+  upload.single("file"),
+  async (request, response) => {
+    try {
+      if (!request.file) {
+        return response.status(400).json({ error: "No file uploaded" });
+      }
 
-  response.status(200).send({
-    message: "File uploaded",
-    file: request.file.key,
-    url: request.file.location,
-  });
-});
+      const pdf = new Pdf({
+        filename: request.file.originalname,
+        s3Url: request.file.location,
+        uploadedBy: request.user.id,
+      });
+
+      await pdf.save();
+      await user.findByIdAndUpdate(request.user.id, {
+        $push: { pdfs: pdf._id },
+      });
+
+      response.status(201).json({ pdf, message: "File uploaded successfully" });
+    } catch (error) {
+      console.error("Error uploading file:", error.message);
+      response.status(500).json({ error: error.message });
+    }
+  }
+);
 
 module.exports = uploadRouter;
