@@ -1,4 +1,6 @@
 const logger = require("./logger");
+const jwt = require("jsonwebtoken");
+const config = require("./config");
 
 const requestLogger = (request, response, next) => {
   logger.info("Method:", request.method);
@@ -33,8 +35,24 @@ const errorHandler = (error, request, response, next) => {
   next(error);
 };
 
+const authenticate = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return res.status(401).json({ error: "Access denied" });
+
+  try {
+    const decoded = jwt.verify(token, config.JWT_SECRET);
+    console.log(decoded);
+
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(403).json({ error: "Invalid token" });
+  }
+};
+
 module.exports = {
   requestLogger,
   unknownEndpoint,
   errorHandler,
+  authenticate,
 };
