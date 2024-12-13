@@ -1,13 +1,13 @@
+const processDocRouter = require("express").Router();
 const multer = require("multer");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const fs = require("fs");
 const config = require("../utils/config");
-const app = require("express").Router();
 const { authenticate } = require("../utils/middleware");
 const Pdf = require("../models/pdf");
 const axios = require("axios");
 
-app.post("/", authenticate, async (request, response) => {
+processDocRouter.post("/", authenticate, async (request, response) => {
   try {
     const genAI = new GoogleGenerativeAI(config.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -76,4 +76,4 @@ app.post("/", authenticate, async (request, response) => {
   }
 });
 
-module.exports = app;
+module.exports = processDocRouter;

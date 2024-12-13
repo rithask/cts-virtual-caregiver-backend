@@ -1,9 +1,8 @@
-const express = require("express");
-const app = express();
+const userDataRouter = require("express").Router();
 const { authenticate } = require("../utils/middleware");
 const UserData = require("../models/userData");
 
-app.post("/", authenticate, async (req, res) => {
+userDataRouter.post("/", authenticate, async (req, res) => {
   try {
     const userData = new UserData(req.body, {
       userId: req.user.id,
@@ -18,7 +17,7 @@ app.post("/", authenticate, async (req, res) => {
   }
 });
 
-app.get("/", authenticate, async (req, res) => {
+userDataRouter.get("/", authenticate, async (req, res) => {
   try {
     const userData = await UserData.findOne({
       userId: req.user.id,
@@ -34,4 +33,4 @@ app.get("/", authenticate, async (req, res) => {
   }
 });
 
-module.exports = app;
+module.exports = userDataRouter;
