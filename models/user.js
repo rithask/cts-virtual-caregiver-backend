@@ -23,6 +23,10 @@ const userSchema = new mongoose.Schema({
       ref: "Pdf",
     },
   ],
+  userData: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "UserData",
+  },
 });
 
 userSchema.set("toJSON", {

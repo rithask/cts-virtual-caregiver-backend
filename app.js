@@ -6,6 +6,7 @@ const signupRouter = require("./controllers/signup");
 const loginRouter = require("./controllers/login");
 const uploadRouter = require("./controllers/upload");
 const processRouter = require("./controllers/process-doc");
+const userDataRouter = require("./controllers/userData");
 
 const middleware = require("./utils/middleware");
 const logger = require("./utils/logger");
@@ -35,6 +36,7 @@ app.use("/api/signup", signupRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/upload", uploadRouter);
 app.use("/api/process-doc", processRouter);
+app.use("/api/user-data", userDataRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
