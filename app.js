@@ -8,6 +8,7 @@ const uploadRouter = require("./controllers/upload");
 const processRouter = require("./controllers/process-doc");
 const userDataRouter = require("./controllers/userData");
 const medicineRouter = require("./controllers/medicine");
+const symptomsRouter = require("./controllers/symptoms");
 
 const middleware = require("./utils/middleware");
 const logger = require("./utils/logger");
@@ -39,6 +40,7 @@ app.use("/api/upload", uploadRouter);
 app.use("/api/process-doc", processRouter);
 app.use("/api/user-data", userDataRouter);
 app.use("/api/medicine", medicineRouter);
+app.use("/api/symptoms", symptomsRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
