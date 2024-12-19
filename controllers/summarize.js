@@ -3,7 +3,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { authenticate } = require("../utils/middleware");
 const config = require("../utils/config");
 
-summarizeRouter.post("/summarize", authenticate, async (req, res) => {
+summarizeRouter.post("/", authenticate, async (req, res) => {
   try {
     const { summaryObject } = req.body;
 
@@ -25,9 +25,9 @@ summarizeRouter.post("/summarize", authenticate, async (req, res) => {
     const result = await model.generateContent([prompt]);
     console.log("Generated summary: ", result);
 
-    const rawResponse = result.response.text();
+    const summary = result.response.text();
 
-    res.json({ summary: rawResponse });
+    res.status(200).json(summary);
   } catch (error) {
     console.error("Error generating summary:", error);
     res.status(500).send("Internal Server Error");

@@ -10,7 +10,7 @@ medicineRouter.get("/", authenticate, async (req, res) => {
   }
 
   try {
-    if (full) {
+    if (full === "true") {
       const medicines = await Medicine.findOne({ userId: req.user.id });
       if (!medicines) {
         return res.status(404).json({ error: "Medicines not found" });
@@ -57,7 +57,7 @@ medicineRouter.post("/", authenticate, async (req, res) => {
           dailyMedicineStatus[0].date
       );
 
-      if (existingDailyStatus >= 0) {
+      if (existingDailyStatusIndex >= 0) {
         medicines.dailyMedicineStatus[existingDailyStatusIndex] =
           dailyMedicineStatus[0];
       } else {
