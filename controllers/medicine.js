@@ -4,8 +4,21 @@ const User = require("../models/user");
 const { authenticate } = require("../utils/middleware");
 
 medicineRouter.get("/", authenticate, async (req, res) => {
-  const { date } = req.query;
+  const { date, full } = req.query;
+  if (date && full) {
+    return res.status(400).json({ error: "Invalid query parameters" });
+  }
+
   try {
+    if (full) {
+      const medicines = await Medicine.findOne({ userId: req.user.id });
+      if (!medicines) {
+        return res.status(404).json({ error: "Medicines not found" });
+      }
+
+      res.status(200).json(medicines);
+    }
+
     const medicines = await Medicine.findOne({ userId: req.user.id });
     if (!medicines) {
       return res.status(404).json({ error: "Medicines not found" });
@@ -27,6 +40,9 @@ medicineRouter.get("/", authenticate, async (req, res) => {
 
 medicineRouter.post("/", authenticate, async (req, res) => {
   const { dailyMedicineStatus } = req.body;
+  if (!dailyMedicineStatus) {
+    return res.status(400).json({ error: "Daily status is required" });
+  }
   try {
     let medicines = await Medicine.findOne({ userId: req.user.id });
     if (!medicines) {
