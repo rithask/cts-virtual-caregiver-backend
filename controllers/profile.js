@@ -24,6 +24,7 @@ profileRouter.post("/", authenticate, async (req, res) => {
   }
 
   const profile = new Profile({
+    userId: req.user.id,
     name,
     age,
     dateOfBirth,
