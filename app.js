@@ -11,6 +11,7 @@ const userDataRouter = require("./controllers/userData");
 const medicineRouter = require("./controllers/medicine");
 const symptomsRouter = require("./controllers/symptoms");
 const summarizeRouter = require("./controllers/summarize");
+const notificationRouter = require("./controllers/notification");
 
 const middleware = require("./utils/middleware");
 const logger = require("./utils/logger");
@@ -45,6 +46,7 @@ app.use("/api/user-data", userDataRouter);
 app.use("/api/medicine", medicineRouter);
 app.use("/api/symptoms", symptomsRouter);
 app.use("/api/summarize", summarizeRouter);
+app.use("/api/notification", notificationRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
