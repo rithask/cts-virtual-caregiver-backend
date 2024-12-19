@@ -1,9 +1,9 @@
 const summarizeRouter = require("express").Router();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const { authenticateToken } = require("../middleware/auth");
+const { authenticate } = require("../utils/middleware");
 const config = require("../utils/config");
 
-summarizeRouter.post("/summarize", authenticateToken, async (req, res) => {
+summarizeRouter.post("/summarize", authenticate, async (req, res) => {
   try {
     const { summaryObject } = req.body;
 

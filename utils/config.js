@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+const ASSEMBLY_API_KEY = process.env.ASSEMBLY_API_KEY;
 const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY;
 const AWS_REGION = process.env.AWS_REGION;
 const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
@@ -11,6 +12,7 @@ const S3_BUCKET = process.env.S3_BUCKET;
 const S3_URL = process.env.S3_URL;
 
 module.exports = {
+  ASSEMBLY_API_KEY,
   AWS_ACCESS_KEY,
   AWS_REGION,
   AWS_SECRET_ACCESS_KEY,
