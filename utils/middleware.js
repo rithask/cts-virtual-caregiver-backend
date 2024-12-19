@@ -41,7 +41,6 @@ const authenticate = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, config.JWT_SECRET);
-    console.log(decoded);
 
     req.user = decoded;
     next();

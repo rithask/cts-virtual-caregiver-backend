@@ -4,7 +4,8 @@ const UserData = require("../models/userData");
 
 userDataRouter.post("/", authenticate, async (req, res) => {
   try {
-    const userData = new UserData(req.body, {
+    const userData = new UserData({
+      ...req.body,
       userId: req.user.id,
     });
     await userData.save();
