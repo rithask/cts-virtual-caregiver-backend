@@ -17,22 +17,22 @@ medicineRouter.get("/", authenticate, async (req, res) => {
       }
 
       res.status(200).json(medicines);
+    } else if (date) {
+      const medicines = await Medicine.findOne({ userId: req.user.id });
+      if (!medicines) {
+        return res.status(404).json({ error: "Medicines not found" });
+      }
+
+      const dailyStatus = medicines.dailyMedicineStatus.find(
+        (status) => status.date.toISOString().split("T")[0] === date
+      );
+
+      if (!dailyStatus) {
+        return res.status(404).json({ error: "Daily status not found" });
+      }
+
+      res.status(200).json(dailyStatus);
     }
-
-    const medicines = await Medicine.findOne({ userId: req.user.id });
-    if (!medicines) {
-      return res.status(404).json({ error: "Medicines not found" });
-    }
-
-    const dailyStatus = medicines.dailyMedicineStatus.find(
-      (status) => status.date.toISOString().split("T")[0] === date
-    );
-
-    if (!dailyStatus) {
-      return res.status(404).json({ error: "Daily status not found" });
-    }
-
-    res.status(200).json(dailyStatus);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
