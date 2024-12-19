@@ -35,7 +35,7 @@ usersRouter.post("/", async (request, response, next) => {
     };
 
     const token = jwt.sign(userForToken, config.JWT_SECRET, {
-      expiresIn: 60 * 60,
+      expiresIn: "7d",
     });
 
     response.status(200).send({ token, username: savedUser.username });
