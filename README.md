@@ -9,7 +9,7 @@ backend for cts virtual caregiver.
 
 - `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_REGION` are required for the AWS S3 storage.
 - `GEMINI_API_KEY` is required for the Gemini API.
-- `JWT_SECRET` can be any random string and can be generated using `openssl rand -hex 32`.
+- `JWT_SECRET` can be any random string or can be generated using `openssl rand -hex 32`.
 - `MONGO_URI` is the connection string for the MongoDB database.
 - `PORT` is the port on which the server will run.
 - `S3_BUCKET` and `S3_URL` are required for the AWS S3 storage.
